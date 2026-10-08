@@ -14,6 +14,8 @@ import android.widget.SeekBar
 import android.widget.Switch
 import android.widget.TextView
 import com.shilapi.xcertplay.airplay.CarPlayDisplayScale
+import com.shilapi.xcertplay.compat.setForegroundCompat
+import com.shilapi.xcertplay.compat.setTintListsCompat
 import com.shilapi.xcertplay.host.R
 
 object SettingsWidgets {
@@ -77,13 +79,15 @@ object SettingsWidgets {
             isEnabled = enabled
             if (theme.isOverlay) {
                 showText = false
-                thumbTintList = ColorStateList(
-                    arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-                    intArrayOf(theme.accent, theme.textSecondary),
-                )
-                trackTintList = ColorStateList(
-                    arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-                    intArrayOf(theme.accentTrack, theme.trackOff),
+                setTintListsCompat(
+                    thumb = ColorStateList(
+                        arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+                        intArrayOf(theme.accent, theme.textSecondary),
+                    ),
+                    track = ColorStateList(
+                        arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
+                        intArrayOf(theme.accentTrack, theme.trackOff),
+                    ),
                 )
             } else {
                 minHeight = theme.dp(context, 56)
@@ -128,13 +132,13 @@ object SettingsWidgets {
             row.isFocusable = true
             row.background = android.graphics.drawable.RippleDrawable(
                 ColorStateList.valueOf(ROW_RIPPLE), null, android.graphics.drawable.ColorDrawable(Color.WHITE))
-            row.foreground = android.graphics.drawable.StateListDrawable().apply {
+            row.setForegroundCompat(android.graphics.drawable.StateListDrawable().apply {
                 addState(intArrayOf(android.R.attr.state_focused), android.graphics.drawable.GradientDrawable().apply {
                     setColor(Color.TRANSPARENT)
                     cornerRadius = theme.dp(context, 12).toFloat()
                     setStroke(theme.dp(context, 3), theme.accent)
                 })
-            }
+            })
             row.setOnClickListener { if (switch.isEnabled) switch.toggle() }
             switch.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
             row.accessibilityDelegate = object : View.AccessibilityDelegate() {

@@ -6,11 +6,15 @@ import android.media.MediaRecorder
 import android.media.audiofx.AcousticEchoCanceler
 import android.media.audiofx.AudioEffect
 import android.media.audiofx.NoiseSuppressor
+import android.os.Build
 import android.util.Log
 import com.shilapi.xcertplay.airplay.AudioCodecKind
 import com.shilapi.xcertplay.airplay.MicrophoneConfig
 import com.shilapi.xcertplay.airplay.MicrophoneCounters
 import com.shilapi.xcertplay.airplay.MicrophonePacketizer
+import com.shilapi.xcertplay.compat.pcm16AudioRecord
+import com.shilapi.xcertplay.compat.readBlocking
+import com.shilapi.xcertplay.compat.routedDeviceType
 import java.io.Closeable
 import java.net.DatagramPacket
 import java.net.DatagramSocket
@@ -138,17 +142,7 @@ internal class MicrophoneUplink(
 
     private fun createRecorder(source: Int, channelMask: Int, bufferSize: Int): AudioRecord? {
         val recorder = try {
-            AudioRecord.Builder()
-                .setAudioSource(source)
-                .setAudioFormat(
-                    AndroidAudioFormat.Builder()
-                        .setEncoding(AndroidAudioFormat.ENCODING_PCM_16BIT)
-                        .setSampleRate(config.sampleRate)
-                        .setChannelMask(channelMask)
-                        .build(),
-                )
-                .setBufferSizeInBytes(bufferSize)
-                .build()
+            pcm16AudioRecord(source, config.sampleRate, channelMask, bufferSize)
         } catch (error: Exception) {
             Log.e(TAG, "microphone recorder creation failed source=$source", error)
             stats.failure(MicrophoneFailureStage.RECORDER_CREATION, error)
@@ -242,7 +236,7 @@ internal class MicrophoneUplink(
         try {
             while (running.get()) {
                 stats.reading()
-                val count = recorder.read(readBuffer, 0, readBuffer.size, AudioRecord.READ_BLOCKING)
+                val count = recorder.readBlocking(readBuffer, 0, readBuffer.size)
                 stats.read(count)
                 if (count > 0) clock?.read(recorder, count / 2)
                 if (count < 0) {
@@ -337,7 +331,7 @@ internal class MicrophoneUplink(
         }
     }
 
-    private fun routeType(recorder: AudioRecord): Int? = runCatching { recorder.routedDevice?.type }.getOrNull()
+    private fun routeType(recorder: AudioRecord): Int? = runCatching { recorder.routedDeviceType }.getOrNull()
 
     /** Capture can continue with the same recorder if the optional native processor stops working. */
     @Synchronized
@@ -438,7 +432,8 @@ internal class CaptureClock(private val sampleRate: Int) {
         samplesRead += samples
         lastReadSamples = samples
         val now = System.nanoTime()
-        val stamped = runCatching {
+        // AudioRecord.getTimestamp needs API 24; before that the fixed latency estimate below is used.
+        val stamped = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && runCatching {
             recorder.getTimestamp(timestamp, android.media.AudioTimestamp.TIMEBASE_MONOTONIC) == AudioRecord.SUCCESS
         }.getOrDefault(false)
         lastReadEndNs = if (stamped && timestamp.nanoTime > 0) {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.provider.Settings
 import com.shilapi.xcertplay.adb.AdbKeys
 import com.shilapi.xcertplay.adb.LocalAdb
+import com.shilapi.xcertplay.compat.canDrawOverlays
 import java.io.Closeable
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -19,7 +20,7 @@ internal object UsbPermissionSetup {
                 ACCESSIBILITY -> UsbAutoConfirmService.isEnabled(context) &&
                     Settings.Secure.getInt(context.contentResolver, Settings.Secure.ACCESSIBILITY_ENABLED, 0) == 1
                 USAGE -> HomeScreenMonitor.hasAccess(context)
-                OVERLAY -> Settings.canDrawOverlays(context)
+                OVERLAY -> canDrawOverlays(context)
             }
         }.getOrDefault(false)
     }

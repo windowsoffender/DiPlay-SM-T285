@@ -6,6 +6,8 @@ import android.media.AudioTrack
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import com.shilapi.xcertplay.compat.streamAudioTrack
+import com.shilapi.xcertplay.compat.writeBlocking
 import java.io.Closeable
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -41,25 +43,20 @@ internal class AudioChannelPreview(private val onUnavailable: (Int) -> Unit) : C
                 check(minimum > 0) { "No PCM output buffer is available" }
                 val bufferBytes = maxOf(minimum, SAMPLE_RATE / 10 * 2)
                 val built = if (channel == 0) {
-                    AudioTrack.Builder()
-                        .setAudioAttributes(
-                            AudioAttributes.Builder()
-                                .setUsage(if (navigation) AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE
-                                    else AudioAttributes.USAGE_MEDIA)
-                                .setContentType(if (navigation) AudioAttributes.CONTENT_TYPE_SPEECH
-                                    else AudioAttributes.CONTENT_TYPE_MUSIC)
-                                .build(),
-                        )
-                        .setAudioFormat(
-                            AudioFormat.Builder()
-                                .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
-                                .setSampleRate(SAMPLE_RATE)
-                                .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
-                                .build(),
-                        )
-                        .setTransferMode(AudioTrack.MODE_STREAM)
-                        .setBufferSizeInBytes(bufferBytes)
-                        .build()
+                    streamAudioTrack(
+                        AudioAttributes.Builder()
+                            .setUsage(if (navigation) AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE
+                                else AudioAttributes.USAGE_MEDIA)
+                            .setContentType(if (navigation) AudioAttributes.CONTENT_TYPE_SPEECH
+                                else AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .build(),
+                        AudioFormat.Builder()
+                            .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                            .setSampleRate(SAMPLE_RATE)
+                            .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+                            .build(),
+                        bufferBytes,
+                    )
                 } else {
                     // Match playback and let the head unit handle vendor-specific stream types.
                     @Suppress("DEPRECATION")
@@ -74,9 +71,7 @@ internal class AudioChannelPreview(private val onUnavailable: (Int) -> Unit) : C
                 built.play()
                 var written = 0
                 while (written < pcm.size && !closed && generation.get() == request) {
-                    val count = built.write(
-                        pcm, written, minOf(4096, pcm.size - written), AudioTrack.WRITE_BLOCKING,
-                    )
+                    val count = built.writeBlocking(pcm, written, minOf(4096, pcm.size - written))
                     check(count > 0) { "Could not write preview tone" }
                     written += count
                 }

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeoutException
 /**
  * Queues and reaps reads on one [UsbDeviceConnection] on every supported Android version.
  *
- * API 26 added `UsbRequest.queue(ByteBuffer)` and `requestWait(timeout)`. Android 7.x has only
+ * API 26 added `UsbRequest.queue(ByteBuffer)` and `requestWait(timeout)`. Older releases have only
  * `queue(ByteBuffer, Int)` and a blocking `requestWait()`, so a helper thread reaps completions
  * there while a request is in flight, and [await] waits for them with a timeout.
  * The owner must be the only `requestWait` user on the connection, and must cancel its requests
@@ -25,7 +25,7 @@ internal class UsbRequestQueue(private val connection: UsbDeviceConnection, thre
     /** Queues [buffer] from its position to its limit; a completed read advances the position. */
     fun queue(request: UsbRequest, buffer: ByteBuffer): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) return request.queue(buffer)
-        // The Android 7.x call fills a direct buffer from its start, whatever its position.
+        // The pre-API 26 call fills a direct buffer from its start, whatever its position.
         require(buffer.position() == 0) { "Android 7 USB reads must start at buffer position 0" }
         @Suppress("DEPRECATION")
         val queued = request.queue(buffer, buffer.remaining())

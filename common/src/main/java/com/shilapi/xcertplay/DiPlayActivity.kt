@@ -43,6 +43,9 @@ import com.shilapi.xcertplay.airplay.CarPlayClusterDisplay
 import com.shilapi.xcertplay.airplay.CarPlayDisplayScale
 import com.shilapi.xcertplay.airplay.ClusterTurnCardOverlay
 import com.shilapi.xcertplay.compat.closeCompat
+import com.shilapi.xcertplay.compat.hasPermission
+import com.shilapi.xcertplay.compat.setForegroundCompat
+import com.shilapi.xcertplay.compat.systemService
 import com.shilapi.xcertplay.hud.BydAdbAccess
 import com.shilapi.xcertplay.hud.BydNavigationOutputs
 import com.shilapi.xcertplay.hud.BydFieldSource
@@ -725,7 +728,7 @@ class DiPlayActivity : ComponentActivity() {
             isClickable = true
             isFocusable = true
             isSelected = selected
-            foreground = focusRing(12)
+            setForegroundCompat(focusRing(12))
             contentDescription = getString(R.string.settings_open_category, title)
             background = android.graphics.drawable.RippleDrawable(
                 ColorStateList.valueOf(RIPPLE),
@@ -925,8 +928,8 @@ class DiPlayActivity : ComponentActivity() {
         isClickable = true
         isFocusable = true
         contentDescription = getString(R.string.settings_open_category, settingsCategoryTitle(category))
-        foreground = android.graphics.drawable.LayerDrawable(arrayOf(
-            android.graphics.drawable.RippleDrawable(ColorStateList.valueOf(RIPPLE), null, null), focusRing(12)))
+        setForegroundCompat(android.graphics.drawable.LayerDrawable(arrayOf(
+            android.graphics.drawable.RippleDrawable(ColorStateList.valueOf(RIPPLE), null, null), focusRing(12))))
         setPadding(dp(16), 0, dp(16), 0)
         addView(ImageView(this@DiPlayActivity).apply {
             setImageResource(icon)
@@ -974,8 +977,8 @@ class DiPlayActivity : ComponentActivity() {
         setPadding(dp(16), dp(10), dp(16), dp(10))
         isClickable = true
         isFocusable = true
-        foreground = android.graphics.drawable.LayerDrawable(arrayOf(
-            android.graphics.drawable.RippleDrawable(ColorStateList.valueOf(RIPPLE), null, null), focusRing(12)))
+        setForegroundCompat(android.graphics.drawable.LayerDrawable(arrayOf(
+            android.graphics.drawable.RippleDrawable(ColorStateList.valueOf(RIPPLE), null, null), focusRing(12))))
         contentDescription = getString(R.string.settings_open_category, settingsCategoryTitle(category))
         addView(label(settingsCategoryTitle(category), 17, TEXT, true))
         addView(label(summary, 13, MUTED).apply { setPadding(0, dp(3), 0, 0) })
@@ -2200,7 +2203,7 @@ class DiPlayActivity : ComponentActivity() {
             setPadding(0, dp(16), 0, dp(16))
         })
         body.addView(button(getString(R.string.copy_command), false) {
-            getSystemService(android.content.ClipboardManager::class.java).setPrimaryClip(
+            systemService<android.content.ClipboardManager>()?.setPrimaryClip(
                 android.content.ClipData.newPlainText(getString(R.string.clipboard_usage_access), command))
             toast(getString(R.string.copied_to_the_car_clipboard_run_the_command_on_your_comput))
         }, matchButton(0, 56))
@@ -2337,7 +2340,7 @@ class DiPlayActivity : ComponentActivity() {
             setBackgroundColor(0x22FFFFFF)
         })
         body.addView(button(getString(R.string.copy_command), false) {
-            getSystemService(android.content.ClipboardManager::class.java).setPrimaryClip(
+            systemService<android.content.ClipboardManager>()?.setPrimaryClip(
                 android.content.ClipData.newPlainText("DiPlay ADB Command", adbCmd)
             )
             toast(getString(R.string.copied_to_the_car_clipboard_run_the_command_on_your_comput))
@@ -3250,8 +3253,7 @@ class DiPlayActivity : ComponentActivity() {
     private fun vehicleDataSwitchesOn() = BydOutputSettings.batteryToIphone(this) ||
         BydOutputSettings.wheelSpeedToIphone(this) || BydOutputSettings.videoWhileParked(this)
 
-    private fun hasPreciseLocation() =
-        checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    private fun hasPreciseLocation() = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
 
     // The cluster screen is described at connection time, so a running session reconnects over
     // its current link. The position choices need no call: getString(R.string.apply_and_reconnect) already does it.
@@ -3744,7 +3746,7 @@ class DiPlayActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= 31 && checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             bluetoothPermission.launch(Manifest.permission.BLUETOOTH_CONNECT); return
         }
-        val adapter = getSystemService(BluetoothManager::class.java)?.adapter
+        val adapter = systemService<BluetoothManager>()?.adapter
         if (adapter == null || !adapter.isEnabled) {
             AlertDialog.Builder(this).setTitle(getString(R.string.turn_on_bluetooth))
                 .setMessage(getString(R.string.enable_the_car_s_bluetooth_and_pair_your_iphone_first))
@@ -3796,7 +3798,7 @@ class DiPlayActivity : ComponentActivity() {
     }
 
     private fun resetWirelessGroup() {
-        val manager = getSystemService(android.net.wifi.p2p.WifiP2pManager::class.java)
+        val manager = systemService<android.net.wifi.p2p.WifiP2pManager>()
         if (manager == null) { toast(getString(R.string.this_head_unit_does_not_support_wi_fi_direct)); return }
         val channel = manager.initialize(this, mainLooper, null)
         try {
@@ -4216,7 +4218,7 @@ class DiPlayActivity : ComponentActivity() {
         background = android.graphics.drawable.RippleDrawable(ColorStateList.valueOf(RIPPLE), rounded(if (primary) ACCENT else BUTTON, if (primary) ACCENT else BORDER), null)
         setPadding(dp(16), 0, dp(16), 0); minHeight = dp(56); stateListAnimator = null
         compoundDrawablePadding = dp(12)
-        foreground = focusRing()
+        setForegroundCompat(focusRing())
         text = title
         searchIndexSink?.add(title.substringBefore(VALUE_SEPARATOR))
         setOnClickListener { click() }

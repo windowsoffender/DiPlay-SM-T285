@@ -9,7 +9,7 @@ import android.os.Looper
 
 /**
  * One audio focus request that works on every supported Android version.
- * API 26+ uses [AudioFocusRequest]. Android 7.x uses the stream-based calls, whose callbacks are
+ * API 26+ uses [AudioFocusRequest]. Older releases use the stream-based calls, whose callbacks are
  * moved to [handler] so that both paths deliver them on the same thread.
  */
 class AudioFocusRequestCompat(
@@ -49,7 +49,7 @@ class AudioFocusRequestCompat(
         }
 
     internal companion object {
-        /** The stream Android 7.x derives from these usages for its own focus bookkeeping. */
+        /** The stream that releases before Android 8 derive from these usages for their own focus bookkeeping. */
         fun legacyStreamType(usage: Int): Int = when (usage) {
             AudioAttributes.USAGE_VOICE_COMMUNICATION -> AudioManager.STREAM_VOICE_CALL
             AudioAttributes.USAGE_ALARM -> AudioManager.STREAM_ALARM

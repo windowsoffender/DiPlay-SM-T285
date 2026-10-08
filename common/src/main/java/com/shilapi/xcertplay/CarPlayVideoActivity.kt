@@ -38,6 +38,8 @@ import androidx.media3.exoplayer.hls.HlsManifest
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 import com.shilapi.xcertplay.airplay.VideoInCar
+import com.shilapi.xcertplay.compat.activeNetworkCompat
+import com.shilapi.xcertplay.compat.systemService
 import com.shilapi.xcertplay.host.R
 import java.util.Locale
 import androidx.media3.ui.R as Media3R
@@ -316,8 +318,8 @@ class CarPlayVideoActivity : Activity() {
         .joinToString(" <- ") { "${it.javaClass.simpleName}(${it.message?.replace(Regex("\\w+://\\S+"), "<url>")})" }
 
     private fun playbackNetworkSummary(): String {
-        val manager = getSystemService(ConnectivityManager::class.java)
-        val network = manager?.activeNetwork
+        val manager = systemService<ConnectivityManager>()
+        val network = manager?.activeNetworkCompat()
         val capabilities = network?.let(manager::getNetworkCapabilities)
         if (network == null || capabilities == null) return "network=none"
         val transports = buildList {

@@ -10,12 +10,13 @@ android {
     }
 
     defaultConfig {
-        minSdk = 25
+        minSdk = 22
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
 
     buildFeatures {
@@ -31,6 +32,7 @@ android {
 
 dependencies {
     api(project(":shared"))
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)

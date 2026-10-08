@@ -1,10 +1,10 @@
 [versions]
 agp = "9.3.0"
-coreKtx = "1.19.0"
+coreKtx = "1.17.0" # 1.18+ needs API 23
 lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.8.0"
 kotlin = "2.2.10"
-composeBom = "2026.02.01"
+composeBom = "2025.11.01" # Compose 1.9; 1.10+ needs API 23
 appcompat = "1.8.0"
 appProjected = "1.4.0"
 appAutomotive = "1.7.0"
@@ -12,7 +12,8 @@ app = "1.4.0"
 junit = "4.13.2"
 bouncycastle = "1.79"
 jmdns = "3.6.3"
-media3 = "1.11.1"
+media3 = "1.8.0" # 1.9+ needs API 23
+desugarJdkLibs = "2.1.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -29,6 +30,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-app-projected = { group = "androidx.car.app", name = "app-projected", version.ref = "appProjected" }
 androidx-app-automotive = { group = "androidx.car.app", name = "app-automotive", version.ref = "appAutomotive" }
 androidx-app = { group = "androidx.car.app", name = "app", version.ref = "app" }
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 bouncycastle = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncycastle" }
 jmdns = { group = "org.jmdns", name = "jmdns", version.ref = "jmdns" }

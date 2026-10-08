@@ -8,6 +8,8 @@ import android.net.TetheringInterface
 import android.net.TetheringManager
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.shilapi.xcertplay.compat.activeNetworkCompat
+import com.shilapi.xcertplay.compat.systemService
 import java.io.Closeable
 import java.io.File
 import java.net.NetworkInterface
@@ -17,13 +19,13 @@ internal class ManualHotspotInterfaces(
     private val context: Context,
     private val onDiagnostic: (String) -> Unit = {},
 ) : Closeable {
-    private val connectivity = context.getSystemService(ConnectivityManager::class.java)
+    private val connectivity = context.systemService<ConnectivityManager>()
     private val publicTethering = if (Build.VERSION.SDK_INT >= 36) PublicTethering(context) else null
     private var lastLegacyDiagnostic: String? = null
 
     fun sample(): HotspotNetworkSnapshot {
         val ap = publicTethering?.interfaces ?: legacyApInterfaces()
-        val before = runCatching { connectivity?.activeNetwork }
+        val before = runCatching { connectivity?.activeNetworkCompat() }
         val upstreams = runCatching {
             checkNotNull(connectivity)
             connectivity.allNetworks.mapNotNull { network ->
@@ -45,7 +47,7 @@ internal class ManualHotspotInterfaces(
                 }.getOrNull()
             }
         }.getOrDefault(emptyList())
-        val after = runCatching { connectivity?.activeNetwork }
+        val after = runCatching { connectivity?.activeNetworkCompat() }
         return HotspotNetworkSnapshot(
             interfaces, ap, upstreams, defaultName,
             consistent = before.isSuccess && after.isSuccess && before.getOrNull() == after.getOrNull(),

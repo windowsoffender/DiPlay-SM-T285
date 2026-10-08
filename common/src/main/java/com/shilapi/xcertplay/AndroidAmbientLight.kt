@@ -7,11 +7,12 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Handler
 import android.os.Looper
+import com.shilapi.xcertplay.compat.systemService
 
 /** Activity-owned adapter. Sensor events and delayed transitions share the main looper. */
 internal class AndroidAmbientLight(context: Context) :
     CarPlayNightModeController.LightSource, SensorEventListener {
-    private val manager = context.getSystemService(SensorManager::class.java)
+    private val manager = context.systemService<SensorManager>()
     private val sensor = manager?.getDefaultSensor(Sensor.TYPE_LIGHT)
     private val handler = Handler(Looper.getMainLooper())
     private var onLux: ((Float) -> Unit)? = null
