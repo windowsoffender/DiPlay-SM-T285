@@ -384,7 +384,7 @@
     <string name="settings_connection_summary">Phone, cable, wireless and automatic connection</string>
     <string name="settings_display_summary">Appearance, full screen, resolution and frame rate</string>
     <string name="settings_audio_summary">Speaker routing and music buffering</string>
-    <string name="settings_navigation_summary">Location reporting and supported dashboard guidance</string>
+    <string name="settings_navigation_summary">Location reporting</string>
     <string name="settings_vehicle_summary">Driving side, wheel keys, car button and CarPlay gestures</string>
     <string name="settings_reconnect_pending">Saved. Some changes apply when CarPlay reconnects.</string>
     <string name="settings_reconnect_now">Reconnect now</string>
@@ -394,7 +394,7 @@
     <string name="settings_experimental_display">Display (experimental)</string>
     <string name="settings_diagnostics_summary">Save a local report when troubleshooting a connection</string>
     <string name="settings_full_screen_description">Hide the status and navigation bars in DiPlay and CarPlay.</string>
-    <string name="settings_vehicle_description">Vehicle and dashboard features vary by model and firmware. Review them in Advanced settings before enabling experimental controls.</string>
+    <string name="settings_vehicle_description">Vehicle features vary by model and firmware. Review them in Advanced settings before enabling experimental controls.</string>
     <string name="settings_open_advanced">Open Advanced settings</string>
     <string name="setup_needs_attention">Setup needs attention</string>
     <string name="share">Share</string>
@@ -636,7 +636,7 @@
     <string name="settings_gesture_fingers">Open settings · swipe with %1$d fingers (tap to change)</string>
     <string name="settings_gesture_fingers_label">Open settings · swipe-down fingers</string>
     <string name="settings_gesture_fingers_option">%1$d fingers</string>
-    <string name="settings_gesture_fingers_hint">Pick a finger count your head unit does not already use. BYD takes three-finger swipe-down for its air-conditioning panel.</string>
+    <string name="settings_gesture_fingers_hint">Pick a finger count your head unit does not already use.</string>
     <string name="auto_car_hotspot_title">Automatically turn on the car hotspot</string>
     <string name="auto_car_hotspot_description">Starts the saved car hotspot when DiPlay opens. Turning this on automatically requests the required permissions through ADB; allow the prompt on the car screen. Enable “Open after the car starts” for boot startup. Keeps the hotspot name and password and never turns it off.</string>
     <string name="settings_auto_hotspot_description">Starts the saved car hotspot when DiPlay opens and before each wireless connection.</string>

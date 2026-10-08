@@ -17,14 +17,14 @@
     <string name="settings_connection_summary">手機、有線、無線及自動連線</string>
     <string name="settings_display_summary">外觀、全螢幕、解析度和影格率</string>
     <string name="settings_audio_summary">聲音輸出與音樂緩衝</string>
-    <string name="settings_navigation_summary">位置回報及支援的儀表板導航提示</string>
+    <string name="settings_navigation_summary">位置回報</string>
     <string name="settings_vehicle_summary">駕駛側、方向盤按鍵、車輛按鈕和 CarPlay 手勢</string>
     <string name="settings_advanced_media">影片與音訊</string>
     <string name="settings_wheel_keys">方向盤按鍵</string>
     <string name="settings_experimental_display">顯示（實驗性）</string>
     <string name="settings_diagnostics_summary">排除連線問題時儲存本機報告</string>
     <string name="settings_full_screen_description">在 DiPlay 與 CarPlay 中隱藏狀態列及導覽列。</string>
-    <string name="settings_vehicle_description">車輛和儀表板功能因車型和韌體而異。啟用實驗性設定前，請先在進階設定中查看。</string>
+    <string name="settings_vehicle_description">車輛功能因車型和韌體而異。啟用實驗性設定前，請先在進階設定中查看。</string>
     <string name="settings_open_advanced">開啟進階設定</string>
     <string name="settings_reconnect_pending">已儲存。部分變更將在 CarPlay 重新連線後生效。</string>
     <string name="settings_reconnect_now">立即重新連線</string>

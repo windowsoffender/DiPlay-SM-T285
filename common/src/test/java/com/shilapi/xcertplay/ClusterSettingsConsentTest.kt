@@ -1,6 +1,7 @@
 package com.shilapi.xcertplay
 
 import android.app.AlertDialog
+import android.content.pm.PackageInfo
 import android.os.Looper
 import android.view.Surface
 import android.view.View
@@ -39,6 +40,8 @@ class ClusterSettingsConsentTest {
         val app = RuntimeEnvironment.getApplication()
         app.getSharedPreferences("xcertplay_airplay", 0).edit().clear().commit()
         app.getSharedPreferences("diplay", 0).edit().clear().commit()
+        // The dashboard map only exists on a BYD.
+        shadowOf(app.packageManager).installPackage(PackageInfo().apply { packageName = "com.byd.carsettings" })
         // These existing sessions have already answered the optional notification prompt.
         app.getSharedPreferences("diplay", 0).edit().putBoolean("notification_asked", true).commit()
         PendingReconnect.clear()

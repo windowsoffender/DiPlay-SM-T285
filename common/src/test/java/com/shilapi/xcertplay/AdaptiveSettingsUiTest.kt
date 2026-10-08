@@ -462,6 +462,7 @@ class AdaptiveSettingsUiTest {
     }
 
     @Test fun advancedContainsOnlyExpertSections() {
+        installBydSettingsPackage()
         val screen = openSettings()
         descendants(screen.window.decorView)
             .single { candidate ->
@@ -480,6 +481,23 @@ class AdaptiveSettingsUiTest {
         assertFalse(texts(screen).any { it.text == screen.getString(R.string.audio_routing) })
         assertFalse(texts(screen).any { it.text == screen.getString(R.string.location) })
         assertFalse(texts(screen).any { it.text == screen.getString(R.string.diagnostics) })
+    }
+
+    @Test fun offABydTheBydCardsAndSetupGuideAreHidden() {
+        val screen = openSettings()
+        assertFalse(texts(screen).any { it.text == screen.getString(R.string.setup_guide) })
+        descendants(screen.window.decorView)
+            .single { candidate ->
+                candidate.contentDescription == screen.getString(
+                    R.string.settings_open_category,
+                    screen.getString(R.string.settings_advanced),
+                ) && descendants(candidate).filterIsInstance<ImageView>().count() == 2
+            }
+            .performClick()
+
+        assertTrue(texts(screen).any { it.text == screen.getString(R.string.settings_advanced_caution_title) })
+        assertFalse(texts(screen).any { it.text == screen.getString(R.string.carplay_map_on_instrument_cluster_experimental) })
+        assertFalse(texts(screen).any { it.text == screen.getString(R.string.advanced_vehicle_data) })
     }
 
     @Test fun displayOpensPictureAdjustments() {

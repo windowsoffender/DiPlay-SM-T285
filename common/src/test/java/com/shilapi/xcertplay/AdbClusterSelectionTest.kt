@@ -1,6 +1,7 @@
 package com.shilapi.xcertplay
 
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.hardware.display.DisplayManager
 import android.view.Display
 import com.shilapi.xcertplay.airplay.AirPlayDisplayConfig
@@ -23,6 +24,8 @@ class AdbClusterSelectionTest {
 
     @Before fun reset() {
         app.getSharedPreferences("xcertplay_airplay", Context.MODE_PRIVATE).edit().clear().commit()
+        // The dashboard map only exists on a BYD.
+        shadowOf(app.packageManager).installPackage(PackageInfo().apply { packageName = "com.byd.carsettings" })
     }
 
     @Test fun turningOffAdbKeepsTheExistingClusterMapPreference() {

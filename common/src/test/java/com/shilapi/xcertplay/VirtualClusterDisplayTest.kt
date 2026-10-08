@@ -1,5 +1,6 @@
 package com.shilapi.xcertplay
 
+import android.content.pm.PackageInfo
 import com.shilapi.xcertplay.airplay.AirPlayDisplayConfig
 import java.util.concurrent.ExecutorService
 import org.junit.Assert.*
@@ -9,6 +10,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
@@ -17,6 +20,8 @@ class VirtualClusterDisplayTest {
     private lateinit var activity: CarPlayHostActivity
 
     @Before fun setUp() {
+        // The dashboard map only exists on a BYD.
+        shadowOf(RuntimeEnvironment.getApplication().packageManager).installPackage(PackageInfo().apply { packageName = "com.byd.carsettings" })
         activity = Robolectric.buildActivity(CarPlayHostActivity::class.java).get()
         AirPlayPersistence.saveClusterMapEnabled(activity, false)
     }
@@ -31,6 +36,12 @@ class VirtualClusterDisplayTest {
     }
 
     @Test fun virtualStreamRemainsOptIn() { assertNull(config()) }
+
+    @Test fun offABydASwitchLeftOnRequestsNoStream() {
+        shadowOf(RuntimeEnvironment.getApplication().packageManager).removePackage("com.byd.carsettings")
+        AirPlayPersistence.saveClusterMapEnabled(activity, true)
+        assertNull(config())
+    }
 
     @Test fun absentPhysicalClusterNegotiates16By9AndSetsMirrorAspect() {
         AirPlayPersistence.saveClusterMapEnabled(activity, true)

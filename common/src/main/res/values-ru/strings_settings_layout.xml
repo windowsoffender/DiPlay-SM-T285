@@ -17,14 +17,14 @@
     <string name="settings_connection_summary">Телефон, кабель, беспроводное и автоматическое подключение</string>
     <string name="settings_display_summary">Оформление, полный экран, разрешение и частота кадров</string>
     <string name="settings_audio_summary">Вывод звука и буферизация музыки</string>
-    <string name="settings_navigation_summary">Передача местоположения и поддерживаемые подсказки на приборной панели</string>
+    <string name="settings_navigation_summary">Передача местоположения</string>
     <string name="settings_vehicle_summary">Сторона водителя, кнопки на руле, кнопка автомобиля и жесты CarPlay</string>
     <string name="settings_advanced_media">Видео и звук</string>
     <string name="settings_wheel_keys">Кнопки на руле</string>
     <string name="settings_experimental_display">Экран (экспериментально)</string>
     <string name="settings_diagnostics_summary">Сохраните локальный отчёт при устранении проблем с подключением</string>
     <string name="settings_full_screen_description">Скрывать строки состояния и навигации в DiPlay и CarPlay.</string>
-    <string name="settings_vehicle_description">Функции автомобиля и приборной панели зависят от модели и прошивки. Проверьте их в разделе «Дополнительно», прежде чем включать экспериментальные параметры.</string>
+    <string name="settings_vehicle_description">Функции автомобиля зависят от модели и прошивки. Проверьте их в разделе «Дополнительно», прежде чем включать экспериментальные параметры.</string>
     <string name="settings_open_advanced">Открыть дополнительные настройки</string>
     <string name="settings_reconnect_pending">Сохранено. Некоторые изменения вступят в силу после переподключения CarPlay.</string>
     <string name="settings_reconnect_now">Переподключить</string>

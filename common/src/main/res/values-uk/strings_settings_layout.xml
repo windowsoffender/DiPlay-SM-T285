@@ -17,14 +17,14 @@
     <string name="settings_connection_summary">Телефон, кабель, бездротове та автоматичне підключення</string>
     <string name="settings_display_summary">Оформлення, весь екран, роздільність і частота кадрів</string>
     <string name="settings_audio_summary">Виведення звуку та буферизація музики</string>
-    <string name="settings_navigation_summary">Передавання місцезнаходження та підтримувані підказки на приладовій панелі</string>
+    <string name="settings_navigation_summary">Передавання місцезнаходження</string>
     <string name="settings_vehicle_summary">Бік водія, кнопки на кермі, кнопка автомобіля та жести CarPlay</string>
     <string name="settings_advanced_media">Відео та звук</string>
     <string name="settings_wheel_keys">Кнопки на кермі</string>
     <string name="settings_experimental_display">Екран (експериментально)</string>
     <string name="settings_diagnostics_summary">Збережіть локальний звіт під час усунення проблем із підключенням</string>
     <string name="settings_full_screen_description">Приховувати панелі стану й навігації в DiPlay та CarPlay.</string>
-    <string name="settings_vehicle_description">Функції автомобіля та приладової панелі залежать від моделі й прошивки. Перегляньте їх у розділі «Додатково», перш ніж вмикати експериментальні параметри.</string>
+    <string name="settings_vehicle_description">Функції автомобіля залежать від моделі й прошивки. Перегляньте їх у розділі «Додатково», перш ніж вмикати експериментальні параметри.</string>
     <string name="settings_open_advanced">Відкрити додаткові налаштування</string>
     <string name="settings_reconnect_pending">Збережено. Деякі зміни набудуть чинності після перепідключення CarPlay.</string>
     <string name="settings_reconnect_now">Перепідключити</string>

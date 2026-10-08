@@ -599,7 +599,7 @@
     <string name="settings_gesture_fingers">打开设置 · %1$d 指下滑（点按切换）</string>
     <string name="settings_gesture_fingers_label">打开设置 · 下滑手指数</string>
     <string name="settings_gesture_fingers_option">%1$d 指</string>
-    <string name="settings_gesture_fingers_hint">选择车机没有占用的手指数。比亚迪的三指下滑是空调面板，建议改用 2 指。</string>
+    <string name="settings_gesture_fingers_hint">选择车机没有占用的手指数。</string>
     <string name="auto_car_hotspot_title">自动开启热点</string>
     <string name="auto_car_hotspot_description">DiPlay 启动时开启车机热点。打开开关会自动通过 ADB 申请所需权限，请允许车机上的授权提示。配合“车辆启动后打开”可随开机启动。保留热点名称和密码，不会自动关闭热点。</string>
     <string name="settings_auto_hotspot_description">DiPlay 启动时以及每次无线连接前开启已保存的车机热点。</string>

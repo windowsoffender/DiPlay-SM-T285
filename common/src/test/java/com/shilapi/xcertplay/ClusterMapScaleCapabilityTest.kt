@@ -1,6 +1,7 @@
 package com.shilapi.xcertplay
 
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.hardware.display.DisplayManager
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
@@ -35,6 +36,8 @@ class ClusterMapScaleCapabilityTest {
     @Before fun setUp() {
         val app = RuntimeEnvironment.getApplication()
         app.getSharedPreferences("xcertplay_airplay", Context.MODE_PRIVATE).edit().clear().commit()
+        // The dashboard map only exists on a BYD.
+        shadowOf(app.packageManager).installPackage(PackageInfo().apply { packageName = "com.byd.carsettings" })
         activity = Robolectric.buildActivity(CarPlayHostActivity::class.java).get()
         activity.javaClass.getDeclaredField("hevcEnabled").apply { isAccessible = true }.set(activity, false)
         ShadowMediaCodecList.reset()
