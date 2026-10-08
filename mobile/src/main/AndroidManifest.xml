@@ -18,6 +18,15 @@
             android:name="android.allow_multiple_resumed_activities"
             android:value="true" />
 
+        <!-- The SM-T285 runs DiPlay as its only app, so it is also the home screen. -->
+        <activity android:name="com.shilapi.xcertplay.DiPlayActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <receiver
             android:name="com.shilapi.xcertplay.BootReceiver"
             android:enabled="true"

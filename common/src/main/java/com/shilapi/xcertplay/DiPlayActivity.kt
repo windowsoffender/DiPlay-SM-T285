@@ -300,7 +300,8 @@ class DiPlayActivity : ComponentActivity() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (page != "home") navigateBack()
-                else { isEnabled = false; onBackPressedDispatcher.onBackPressed(); isEnabled = true }
+                // Finishing the home screen would only make Android start it again.
+                else if (!isHomeApp()) { isEnabled = false; onBackPressedDispatcher.onBackPressed(); isEnabled = true }
             }
         })
     }
@@ -531,13 +532,21 @@ class DiPlayActivity : ComponentActivity() {
         addView(label(getString(R.string.diplay), if (compact) 18 else 26, TEXT, true).apply {
             setPadding(if (compact) dp(8) else dp(12), 0, 0, 0)
         }, LinearLayout.LayoutParams(0, if (compact) dp(36) else dp(56), 1f))
-        if (page != "home" || !compact) {
+        if (page != "home" || (!compact && !isHomeApp())) {
             addView(button(if (page == "home") getString(R.string.car_home) else getString(R.string.back), false) {
                 if (page == "home") startActivity(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME))
                 else navigateBack()
             }, LinearLayout.LayoutParams(if (compact) dp(80) else dp(130), if (compact) dp(36) else dp(56)))
         }
     }
+
+    /** True when Android uses DiPlay itself as the home screen, as on a tablet that runs nothing else. */
+    private fun isHomeApp(): Boolean = runCatching {
+        packageManager.resolveActivity(
+            Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME),
+            PackageManager.MATCH_DEFAULT_ONLY,
+        )?.activityInfo?.packageName == packageName
+    }.getOrDefault(false)
 
     private fun navigateBack() {
         val returnCategory = connectionSettingsReturnCategory
