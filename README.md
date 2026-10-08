@@ -1,3 +1,32 @@
+# DiPlay on my old Samsung tablet
+
+This is my fork of DiPlay. I use it to turn my old Galaxy Tab A 2016 (SM-T285, Android 5.1.1) into the CarPlay head unit for my car. The tablet runs nothing but DiPlay.
+
+What I changed from the original:
+
+- Runs on Android 5.1. The original needs Android 7.1 or newer
+- DiPlay is the home screen, so the tablet boots straight into it
+- DiPlay turns on the tablet's hotspot itself, no SIM needed. Samsung's settings won't turn on the hotspot without one
+- It wakes up and connects when the car starts charging it, and disconnects and goes to sleep 30 seconds after the car turns off
+- The BYD stuff stays off since my car isn't a BYD
+
+## Setting up the tablet
+
+The tablet is rooted with Magisk.
+
+1. Build the APK with `DIPLAY_AUTH_ASSETS_DIR=$PWD/.private/runtime-assets ./gradlew :mobile:assembleStandaloneDebug` and install it with `adb install -r mobile/build/outputs/apk/debug/mobile-debug.apk`. The identity files aren't in the repo, see [Build a standalone car-test APK](docs/BUILD.md#build-a-standalone-car-test-apk)
+2. Run `scripts/sm-t285-debloat.sh` to turn off everything DiPlay doesn't need. `scripts/sm-t285-debloat.sh restore` brings it all back
+3. With the hotspot off, run `scripts/sm-t285-hotspot.sh name DiPlay-T285` and `scripts/sm-t285-hotspot.sh channel 6`. Give it a unique name, my iPhone wouldn't join "AndroidAP"
+4. In DiPlay go to Settings > Connection > Open connection setup, pick Built-in car hotspot, enter the hotspot's name and password and turn on "Automatically turn on the car hotspot"
+5. Under Settings > Connection > Automatic connection turn on "Sleep and wake with the car"
+6. On the tablet set Lock screen > Screen lock type to None, or you'll have to swipe every time the car starts
+
+Don't add Magisk boot scripts on this tablet. Samsung's kernel blocks them and it bootloops.
+
+Everything below is the original DiPlay readme.
+
+---
+
 # DiPlay
 
 **CarPlay for compatible BYD Android head units.** Wired and wireless, with the familiar DiAuto interface. Independent app: `com.shihab.diplay`.
