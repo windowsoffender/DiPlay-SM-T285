@@ -279,7 +279,8 @@ class CarPlayBonjour(
                         "Interface mDNS requires a local advertised address"
                     }
                     // A JmDNS instance joins only its address family's multicast group.
-                    for (address in advertisedAddresses) {
+                    val published = mdnsAddresses(advertisedAddresses)
+                    for (address in published) {
                         val dns = JmDNS.create(address, "carplay-${config.deviceId.replace(":", "")}")
                         interfaceMdns.add(dns)
                         dns.addServiceListener("$CARPLAY_CONTROL_SERVICE_TYPE.local.", interfaceListener)
@@ -288,7 +289,7 @@ class CarPlayBonjour(
                             0, 0, CarPlayBonjourProtocol.airPlayTxtRecords(config, identity),
                         ))
                     }
-                    publishedFamilies = advertisedAddresses.joinToString(",") {
+                    publishedFamilies = published.joinToString(",") {
                         if (it is Inet4Address) "IPv4" else "IPv6"
                     }
                 } else {
@@ -658,3 +659,12 @@ class CarPlayBonjour(
         const val FAILURE_NONE = -1
     }
 }
+
+/**
+ * The addresses that get their own JmDNS instance. Before Android 7 a MulticastSocket turns on
+ * address reuse only after it binds, so a second instance cannot bind port 5353 and the whole
+ * wireless start fails. There one family is published, IPv4 when the interface has it.
+ */
+internal fun mdnsAddresses(addresses: List<InetAddress>, sdk: Int = Build.VERSION.SDK_INT): List<InetAddress> =
+    if (sdk >= Build.VERSION_CODES.N || addresses.size <= 1) addresses
+    else listOf(addresses.firstOrNull { it is Inet4Address } ?: addresses.first())

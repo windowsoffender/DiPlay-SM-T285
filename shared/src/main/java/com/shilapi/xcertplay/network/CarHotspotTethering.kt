@@ -2,6 +2,9 @@ package com.shilapi.xcertplay.network
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.wifi.WifiConfiguration
+import android.net.wifi.WifiManager
+import android.os.Build
 import android.os.Bundle
 import android.os.ResultReceiver
 import com.shilapi.xcertplay.adb.AdbKeys
@@ -37,7 +40,16 @@ object CarHotspotTethering {
     ): Result {
         val deadline = System.nanoTime() + timeoutMillis * 1_000_000L
         val observedAdbState = AtomicReference<Boolean?>()
-        val startReflection: (ResultReceiver) -> Unit = { receiver ->
+        val startReflection: (ResultReceiver) -> Unit = start@{ receiver ->
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+                val wifi = context.systemService<WifiManager>() ?: throw NoSuchMethodException("Wi-Fi service unavailable")
+                val setWifiApEnabled = WifiManager::class.java.getMethod(
+                    "setWifiApEnabled", WifiConfiguration::class.java, Boolean::class.javaPrimitiveType)
+                @Suppress("DEPRECATION")
+                startSoftAp(wifiOn = { wifi.isWifiEnabled }, turnWifiOff = { wifi.isWifiEnabled = false },
+                    startAp = { setWifiApEnabled.invoke(wifi, null, true) as? Boolean })
+                return@start
+            }
             val service = ConnectivityManager::class.java.getDeclaredField("mService")
                 .apply { isAccessible = true }
                 .get(context.systemService<ConnectivityManager>())
@@ -71,6 +83,30 @@ object CarHotspotTethering {
             start = startReflection,
         ).also { log("car hotspot auto-enable: ${it.diagnostic}") }
     }
+
+    /** Before Android 7 an app can start the saved hotspot itself; no ADB grant is needed. */
+    fun startsWithoutAdb(): Boolean = Build.VERSION.SDK_INT < Build.VERSION_CODES.N
+
+    /**
+     * Android 5 and 6 have no startTethering, so this starts the saved hotspot the way their Settings
+     * does. The radio can't run the hotspot and a Wi-Fi connection at once, so Wi-Fi goes off first.
+     * This skips Samsung Settings' SIM check, which only lives in its hotspot screen.
+     */
+    internal fun startSoftAp(wifiOn: () -> Boolean, turnWifiOff: () -> Unit, startAp: () -> Boolean?) {
+        if (wifiOn()) {
+            turnWifiOff()
+            try {
+                Thread.sleep(WIFI_OFF_SETTLE_MILLIS)
+            } catch (_: InterruptedException) {
+                // A cancelled startup must not start the hotspot; the caller reports CANCELLED.
+                Thread.currentThread().interrupt()
+                return
+            }
+        }
+        check(startAp() == true) { "The Wi-Fi service refused to start the hotspot" }
+    }
+
+    private const val WIFI_OFF_SETTLE_MILLIS = 600L
 
     /** An ADB observation supplements hidden platform status, but never overrides a current off state. */
     internal fun stateWithAdbObservation(

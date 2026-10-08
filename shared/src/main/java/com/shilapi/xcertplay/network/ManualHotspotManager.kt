@@ -297,11 +297,15 @@ class ManualHotspotManager(
             val configuration = method.invoke(wifiManager) as? WifiConfiguration
                 ?: return null
             val ssid = unquote(configuration.SSID) ?: return null
-            val channel = try {
-                WifiConfiguration::class.java.getField("apChannel").getInt(configuration)
-            } catch (_: ReflectiveOperationException) {
-                0
-            }
+            // Samsung's Android 5 firmware names AOSP's apChannel just "channel". With 0 the iPhone
+            // gets no channel and never joins.
+            val channel = listOf("apChannel", "channel").firstNotNullOfOrNull { name ->
+                try {
+                    WifiConfiguration::class.java.getField(name).getInt(configuration)
+                } catch (_: ReflectiveOperationException) {
+                    null
+                }
+            } ?: 0
             val band = try {
                 legacyHotspotBandToSoftApBand(WifiConfiguration::class.java.getField("apBand").getInt(configuration))
             } catch (_: ReflectiveOperationException) {

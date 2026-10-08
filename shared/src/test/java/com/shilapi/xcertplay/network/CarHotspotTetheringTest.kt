@@ -13,6 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.util.ReflectionHelpers
 import com.shilapi.xcertplay.network.CarHotspotTethering.Result
 
 @RunWith(RobolectricTestRunner::class)
@@ -175,6 +176,47 @@ class CarHotspotTetheringTest {
             assertTrue(Thread.currentThread().isInterrupted)
         } finally {
             Thread.interrupted()
+        }
+    }
+
+    @Test fun android5TurnsWifiOffBeforeStartingTheHotspot() {
+        val calls = mutableListOf<String>()
+        CarHotspotTethering.startSoftAp(wifiOn = { true }, turnWifiOff = { calls += "wifi off" },
+            startAp = { calls += "hotspot on"; true })
+        assertEquals(listOf("wifi off", "hotspot on"), calls)
+    }
+
+    @Test fun android5LeavesWifiAloneWhenItIsAlreadyOff() {
+        CarHotspotTethering.startSoftAp(wifiOn = { false }, turnWifiOff = { fail("Wi-Fi is already off") },
+            startAp = { true })
+    }
+
+    @Test fun android5ReportsARefusedHotspotAsFailed() {
+        assertEquals(Result.FAILED, enable(start = {
+            CarHotspotTethering.startSoftAp(wifiOn = { false }, turnWifiOff = {}, startAp = { false })
+        }))
+    }
+
+    @Test fun android5StopsWhenCancelledWhileWifiTurnsOff() {
+        try {
+            Thread.currentThread().interrupt()
+            CarHotspotTethering.startSoftAp(wifiOn = { true }, turnWifiOff = {},
+                startAp = { fail("A cancelled startup must not start the hotspot"); true })
+            assertTrue(Thread.currentThread().isInterrupted)
+        } finally {
+            Thread.interrupted()
+        }
+    }
+
+    @Test fun onlyAndroid7AndNewerNeedAdbToStartTheHotspot() {
+        val sdk = android.os.Build.VERSION.SDK_INT
+        try {
+            ReflectionHelpers.setStaticField(android.os.Build.VERSION::class.java, "SDK_INT", 22)
+            assertTrue(CarHotspotTethering.startsWithoutAdb())
+            ReflectionHelpers.setStaticField(android.os.Build.VERSION::class.java, "SDK_INT", 24)
+            assertFalse(CarHotspotTethering.startsWithoutAdb())
+        } finally {
+            ReflectionHelpers.setStaticField(android.os.Build.VERSION::class.java, "SDK_INT", sdk)
         }
     }
 

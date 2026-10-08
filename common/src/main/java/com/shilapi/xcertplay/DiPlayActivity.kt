@@ -1944,6 +1944,15 @@ class DiPlayActivity : ComponentActivity() {
                 }
             }, matchButton(12, 60))
             parent.addView(label(if (pendingCarHotspotSetup) getString(R.string.finish_setup_save_your_hotspot_details_to_use_this_mode) else if (carHotspotOff()) getString(R.string.hotspot_details_off) else getString(R.string.hotspot_details_saved), 15, if (carHotspotOff()) WARNING else MUTED).apply { setPadding(0, dp(12), 0, 0) })
+            // Android 5 and 6 let DiPlay start the hotspot itself, so this needs no ADB like the BYD switch does.
+            if (CarHotspotTethering.startsWithoutAdb() && !pendingCarHotspotSetup) {
+                toggle(parent, getString(R.string.auto_car_hotspot_title), getString(R.string.settings_auto_hotspot_description),
+                    CarHotspotSettings.enabled(this)) { on ->
+                    CarHotspotSettings.setEnabled(this, on)
+                    startupHotspotCancelled = !on
+                    if (on) startCarHotspotOnLaunch()
+                }
+            }
             val join = hotspotJoinControls ?: HotspotJoinControls(this,
                 { CarPlayBackgroundSession.hasSession() }, beforeAction = { startupHotspotCancelled = true },
                 labelFactory = { label(it, 15, MUTED) }, buttonFactory = { title, click -> button(title, false, click) })

@@ -8,6 +8,18 @@ import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class CarPlayBonjourTest {
+    private val ipv4 = java.net.InetAddress.getByName("192.168.43.1")
+    private val ipv6 = java.net.InetAddress.getByName("fe80::1")
+
+    @Test fun android5PublishesOneFamilyPreferringIpv4() {
+        assertEquals(listOf(ipv4), mdnsAddresses(listOf(ipv6, ipv4), sdk = 22))
+        assertEquals(listOf(ipv6), mdnsAddresses(listOf(ipv6), sdk = 22))
+    }
+
+    @Test fun android7PublishesEveryFamily() {
+        assertEquals(listOf(ipv6, ipv4), mdnsAddresses(listOf(ipv6, ipv4), sdk = 24))
+    }
+
     @Test fun discoveryDiagnosticsKeepOutcomeWithoutPhoneIdentifiers() {
         val endpoint = CarPlayBonjourEndpoint("Private phone", "192.168.43.25", 7000, "AA:BB:CC:DD:EE:FF")
         assertEquals("control resolved family=IPv4 port=7000", CarPlayBonjourEvent.Resolved(endpoint).diagnosticSummary())
