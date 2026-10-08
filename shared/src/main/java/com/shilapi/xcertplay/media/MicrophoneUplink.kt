@@ -36,6 +36,8 @@ internal class MicrophoneUplink(
     private val echoCancellerFactory: (Int, Int, Int) -> CallEchoCanceller? = { frame, rate, tail ->
         SpeexEchoCanceller.create(frame, rate, tail)
     },
+    /** The Settings microphone level, applied after echo cancellation. */
+    private val gainPercent: Int = MicrophoneGain.DEFAULT_PERCENT,
 ) : Closeable {
     private val running = AtomicBoolean(false)
     private val stats = MicrophoneCaptureStats(config, report = { message ->
@@ -273,6 +275,9 @@ internal class MicrophoneUplink(
                                 restorePlatformEchoCancellation()
                                 canceller = null
                             }
+                        }
+                        if (gainPercent != MicrophoneGain.DEFAULT_PERCENT) {
+                            MicrophoneGain.applyPcm16InPlace(frame, frame.size, gainPercent)
                         }
                         sendFrame(socket, counters, frame)
                         filled = 0

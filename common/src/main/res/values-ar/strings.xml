@@ -692,4 +692,8 @@
     <string name="setup_badge_adb">يتطلب ADB عبر الشبكة</string>
     <string name="setup_done_title">أنت جاهز</string>
     <string name="setup_done_description">اتصل بـ iPhone الآن. يمكنك فتح هذا الدليل مرة أخرى من الإعدادات.</string>
+    <string name="settings_microphone_level">مستوى الميكروفون</string>
+    <string name="settings_microphone_level_option">%1$d %%</string>
+    <string name="settings_microphone_level_default_option">%1$d %% · الافتراضي</string>
+    <string name="settings_microphone_level_description">يرفع صوت الميكروفون أو يخفضه لـ Siri والمكالمات. ارفعه إذا قال الطرف الآخر إن صوتك منخفض. يُطبَّق من طلب Siri أو المكالمة التالية.</string>
 </resources>

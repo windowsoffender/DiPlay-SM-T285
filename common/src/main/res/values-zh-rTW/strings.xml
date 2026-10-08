@@ -752,4 +752,8 @@
     <string name="setup_badge_adb">需要網路 ADB</string>
     <string name="setup_done_title">準備就緒</string>
     <string name="setup_done_description">現在連線你的 iPhone。之後可在設定中再次開啟本精靈。</string>
+    <string name="settings_microphone_level">麥克風音量</string>
+    <string name="settings_microphone_level_option">%1$d %%</string>
+    <string name="settings_microphone_level_default_option">%1$d %% · 預設</string>
+    <string name="settings_microphone_level_description">調高或調低 Siri 和通話使用的麥克風音量。如果對方說你的聲音太小，請調高。從下一次使用 Siri 或通話時生效。</string>
 </resources>

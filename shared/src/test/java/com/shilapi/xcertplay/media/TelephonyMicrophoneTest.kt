@@ -101,6 +101,23 @@ class TelephonyMicrophoneTest {
         assertTrue(ShadowAudioEffect.getAudioEffects().isEmpty())
     }
 
+    @Test fun eachMicrophoneStartUsesTheLevelSavedAtThatTime() {
+        sink.close()
+        var level = 150
+        sink = AndroidMediaSink(context = context, microphoneGainPercent = { level })
+        sink.onMicrophoneStarted(speechRecognition, config("speechrecognition"))
+        awaitCapture()
+        fun uplinkGain() = org.robolectric.util.ReflectionHelpers.getField<Int>(
+            org.robolectric.util.ReflectionHelpers.getField<Map<AudioStreamId, MicrophoneUplink>>(sink, "microphoneUplinks")
+                .getValue(speechRecognition), "gainPercent")
+        assertEquals(150, uplinkGain())
+
+        sink.onMicrophoneStopped(speechRecognition)
+        level = 500
+        sink.onMicrophoneStarted(speechRecognition, config("speechrecognition"))
+        assertEquals(MicrophoneGain.MAX_PERCENT, uplinkGain())
+    }
+
     @Test fun microphoneMetadataAndFinalCountersReachTheAudioDiagnosticCallback() {
         sink.close()
         val diagnostics = CopyOnWriteArrayList<String>()

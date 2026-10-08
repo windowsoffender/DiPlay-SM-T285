@@ -789,4 +789,8 @@
     <string name="setup_badge_adb">Needs ADB over network</string>
     <string name="setup_done_title">You’re ready</string>
     <string name="setup_done_description">Connect your iPhone now. You can open this guide again from Settings.</string>
+    <string name="settings_microphone_level">Microphone level</string>
+    <string name="settings_microphone_level_option">%1$d %%</string>
+    <string name="settings_microphone_level_default_option">%1$d %% · default</string>
+    <string name="settings_microphone_level_description">Turns your microphone up or down for Siri and calls. Raise it if people say you sound quiet. Applies from the next Siri request or call.</string>
 </resources>

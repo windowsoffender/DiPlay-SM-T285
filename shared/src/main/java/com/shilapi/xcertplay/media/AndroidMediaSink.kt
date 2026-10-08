@@ -194,6 +194,8 @@ class AndroidMediaSink(
     private val callEchoCancellation: Boolean = false,
     /** Cut the bass that head units add when they play a call as music. */
     private val callVoiceFilter: Boolean = false,
+    /** The Settings microphone level, read each time the iPhone opens the microphone. */
+    private val microphoneGainPercent: () -> Int = { MicrophoneGain.DEFAULT_PERCENT },
     /**
      * Smooth video: show main-screen frames at the iPhone's frame time plus a delay that starts here and
      * then follows how late the decoder releases frames ([PacingDelay]); 0 shows each as soon as it is
@@ -509,7 +511,8 @@ class AndroidMediaSink(
             if (config.audioType == "telephony") enterCommunicationMode(id)
             val uplink = microphoneUplinks.computeIfAbsent(id) {
                 MicrophoneUplink(config, onAudioDiagnostic,
-                    if (config.audioType == TELEPHONY_AUDIO_TYPE) callEchoReferences[id] else null)
+                    if (config.audioType == TELEPHONY_AUDIO_TYPE) callEchoReferences[id] else null,
+                    gainPercent = MicrophoneGain.sanitize(microphoneGainPercent()))
             }
             if (!uplink.start()) {
                 microphoneUplinks.remove(id, uplink)
@@ -776,6 +779,7 @@ private class VideoDecoder(
     private var configuredRate = 0
     private var submittedFrameLogged = false
     private var duplicateConfigLogged = false
+    private var awaitingConfigLogged = false
     private var failureReports = 0
     private val referenceChain = VideoReferenceChain()
     private var lastKeyFrameRequestNs = 0L
@@ -908,6 +912,7 @@ private class VideoDecoder(
         }
         lastConfig = config
         duplicateConfigLogged = false
+        awaitingConfigLogged = false
         releaseDecoder()
         referenceChain.reset()
         val surface = outputSurface ?: return
@@ -1088,8 +1093,19 @@ private class VideoDecoder(
 
     private fun feed(nalus: ByteArray, presentNs: Long = 0L) {
         val annexB = MediaCodecSupport.toAnnexB(nalus)
-        val config = lastConfig ?: return
+        val config = lastConfig
         if (outputSurface == null) return
+        if (config == null) {
+            // The iPhone sends its codec config before the first frame. Frames without one mean it
+            // skipped that step (seen with HEVC), so ask for a keyframe instead of dropping frames forever.
+            // From xcertplay cda5386e.
+            if (!awaitingConfigLogged) {
+                awaitingConfigLogged = true
+                Log.i(TAG, "video frames without codec config; requesting keyframe")
+            }
+            requestKeyFrameIfDue()
+            return
+        }
         if (annexB.isEmpty()) { recover("invalid video access unit"); return }
         if (!referenceChain.accepts(annexB, config.codec)) {
             requestKeyFrameIfDue()

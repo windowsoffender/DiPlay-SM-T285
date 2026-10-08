@@ -1697,6 +1697,14 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
                 bufferPresets.indexOf(AirPlayPersistence.loadMediaBufferMillis(this)).coerceAtLeast(0)) {
                 AirPlayPersistence.saveMediaBufferMillis(this, bufferPresets[it])
             }
+            val gains = com.shilapi.xcertplay.media.MicrophoneGain.percents
+            choice(card, getString(R.string.settings_microphone_level), gains.map {
+                getString(if (it == com.shilapi.xcertplay.media.MicrophoneGain.DEFAULT_PERCENT)
+                    R.string.settings_microphone_level_default_option else R.string.settings_microphone_level_option, it)
+            }, gains.indexOf(AirPlayPersistence.loadMicrophoneGainPercent(this)).coerceAtLeast(0), reconnects = false) {
+                AirPlayPersistence.saveMicrophoneGainPercent(this, gains[it])
+            }
+            card.addView(label(getString(R.string.settings_microphone_level_description), 14, MUTED))
         }
         filteredSection(content, SettingsSection.LOCATION,
             getString(R.string.location), R.drawable.ic_dp_navigation) { card ->
