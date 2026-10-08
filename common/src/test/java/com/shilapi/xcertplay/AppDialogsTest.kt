@@ -2,7 +2,9 @@ package com.shilapi.xcertplay
 
 import android.content.ContextWrapper
 import android.graphics.drawable.ColorDrawable
+import com.shilapi.xcertplay.host.R
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -45,6 +47,19 @@ class AppDialogsTest {
         }
 
         assertDialogColors(lightOwner.appDialogContext(), DiPlayPalette.LIGHT)
+    }
+
+    @Test fun everyWindowBackgroundIsAResourceSoAndroid5DrawsIt() {
+        // Android 5's PhoneWindow reads windowBackground with getResourceId, so a literal colour draws nothing.
+        for (theme in listOf(R.style.Theme_Xcertplay, R.style.Theme_Xcertplay_Light,
+                R.style.Theme_Xcertplay_Dialog_Dark, R.style.Theme_Xcertplay_Dialog_Light)) {
+            val attributes = context.obtainStyledAttributes(theme, intArrayOf(android.R.attr.windowBackground))
+            try {
+                assertNotEquals(context.resources.getResourceEntryName(theme), 0, attributes.getResourceId(0, 0))
+            } finally {
+                attributes.recycle()
+            }
+        }
     }
 
     private fun assertDialogColors(themedContext: android.content.Context, palette: DiPlayPalette) {
