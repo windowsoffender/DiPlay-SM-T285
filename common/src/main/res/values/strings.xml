@@ -620,6 +620,8 @@
     <string name="auto_car_hotspot_title">Automatically turn on the car hotspot</string>
     <string name="auto_car_hotspot_description">Starts the saved car hotspot when DiPlay opens. Turning this on automatically requests the required permissions through ADB; allow the prompt on the car screen. Enable “Open after the car starts” for boot startup. Keeps the hotspot name and password and never turns it off.</string>
     <string name="settings_auto_hotspot_description">Starts the saved car hotspot when DiPlay opens and before each wireless connection.</string>
+    <string name="settings_car_power_title">Sleep and wake with the car</string>
+    <string name="settings_car_power_description">For a tablet the car charges. Connects when charging starts. 30 seconds after charging stops, disconnects and turns off the hotspot so the tablet can sleep.</string>
     <string name="hotspot_control_missing">Hotspot control permission is missing. Set it up through ADB or open the hotspot in car settings.</string>
     <string name="hotspot_permission_granted">Permission granted.</string>
     <string name="hotspot_permission_failed">The requested permission was not granted. Check the car settings and try again.</string>

@@ -318,7 +318,13 @@ class DiPlayActivity : ComponentActivity() {
         automaticVehicleValidationStarted = false
         scheduleAutomaticVehicleValidation()
         handleWirelessRecovery()
+        if (carStarted(intent) && setupError == null && !CarPlayBackgroundSession.hasSession()) {
+            handler.post { connect(DiPlayPreferences.autoConnectWireless(this)) }
+        }
     }
+
+    /** The car started a tablet that sleeps and wakes with it (CarPower). */
+    private fun carStarted(intent: Intent): Boolean = intent.getBooleanExtra(CarPower.EXTRA_CAR_STARTED, false)
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("page", page)
         outState.putString("settings_category", settingsCategory.name)
@@ -390,7 +396,7 @@ class DiPlayActivity : ComponentActivity() {
             initialLaunch = false
             startCarHotspotOnLaunch()
             if (setupError == null && !CarPlayBackgroundSession.hasSession() &&
-                DiPlayPreferences.autoConnect(this) && intent.getStringExtra("page") == null) {
+                (DiPlayPreferences.autoConnect(this) || carStarted(intent)) && intent.getStringExtra("page") == null) {
                 handler.post { connect(DiPlayPreferences.autoConnectWireless(this)) }
             }
         }
@@ -1246,6 +1252,10 @@ class DiPlayActivity : ComponentActivity() {
                 getString(R.string.default_connection_usb)
             ), connectionModes.indexOf(DiPlayPreferences.defaultConnectionMode(this)), reconnects = false) {
                 DiPlayPreferences.saveDefaultConnectionMode(this, connectionModes[it])
+            }
+            if (CarPower.hasBattery(this)) {
+                toggle(card, getString(R.string.settings_car_power_title), getString(R.string.settings_car_power_description),
+                    CarPower.enabled(this)) { CarPower.setEnabled(this, it) }
             }
             adbToggle(card, R.string.open_after_the_car_starts,
                 R.string.availability_depends_on_your_head_unit_s_startup_settings,

@@ -145,6 +145,16 @@
             </intent-filter>
         </receiver>
 
+        <!-- Sleep and wake with the car (CarPower); the system still delivers its power broadcasts. -->
+        <receiver
+            android:name="com.shilapi.xcertplay.CarPowerReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name="com.shilapi.xcertplay.UsbAutoConfirmService"
             android:exported="true"

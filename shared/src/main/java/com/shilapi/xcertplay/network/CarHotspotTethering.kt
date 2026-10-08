@@ -108,6 +108,16 @@ object CarHotspotTethering {
 
     private const val WIFI_OFF_SETTLE_MILLIS = 600L
 
+    /** Turns off the hotspot that [enable] starts on Android 5 and 6, so a parked tablet can sleep. */
+    fun disableSoftAp(context: Context) {
+        if (!startsWithoutAdb()) return
+        val wifi = context.systemService<WifiManager>() ?: return
+        runCatching {
+            WifiManager::class.java.getMethod("setWifiApEnabled", WifiConfiguration::class.java,
+                Boolean::class.javaPrimitiveType).invoke(wifi, null, false)
+        }
+    }
+
     /** An ADB observation supplements hidden platform status, but never overrides a current off state. */
     internal fun stateWithAdbObservation(
         platformState: () -> Boolean?,

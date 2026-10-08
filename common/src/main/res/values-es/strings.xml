@@ -539,6 +539,8 @@
     <string name="auto_car_hotspot_title">Activar automáticamente el punto de acceso del coche</string>
     <string name="auto_car_hotspot_description">Activa el punto de acceso guardado al abrir DiPlay. El interruptor solicita automáticamente los permisos necesarios mediante ADB; acepta el aviso en la pantalla del coche. Activa la apertura de DiPlay al arrancar para iniciarlo tras el encendido. Conserva el nombre y la contraseña y nunca apaga el punto de acceso.</string>
     <string name="settings_auto_hotspot_description">Activa el punto de acceso guardado al abrir DiPlay y antes de cada conexión inalámbrica.</string>
+    <string name="settings_car_power_title">Dormir y despertar con el coche</string>
+    <string name="settings_car_power_description">Para una tableta que carga el coche. Se conecta cuando empieza la carga. 30 segundos después de que se detenga, se desconecta y apaga el punto de acceso para que la tableta pueda reposar.</string>
     <string name="hotspot_control_missing">Falta el permiso de control del punto de acceso. Concédelo mediante ADB o actívalo en los ajustes del coche.</string>
     <string name="hotspot_permission_granted">Permiso concedido.</string>
     <string name="hotspot_permission_failed">No se ha concedido el permiso solicitado. Revisa los ajustes del coche e inténtalo de nuevo.</string>

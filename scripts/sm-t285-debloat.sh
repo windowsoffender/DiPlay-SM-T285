@@ -171,8 +171,10 @@ else
   echo "This DiPlay build can't be the home screen, so the Samsung launcher stays."
 fi
 
-# Car tweaks: stay awake on any charger, and snappier animations.
+# Car tweaks: stay awake on any charger, a short screen timeout on battery, and snappier animations.
 adb shell settings put global stay_on_while_plugged_in 3
+# On battery (car off) the screen sleeps after a minute; see DiPlay's "Sleep and wake with the car".
+adb shell settings put system screen_off_timeout 60000
 for scale in window_animation_scale transition_animation_scale animator_duration_scale; do
   adb shell settings put global $scale 0.5
 done
