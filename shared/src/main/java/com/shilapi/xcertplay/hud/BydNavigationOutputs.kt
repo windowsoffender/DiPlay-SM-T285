@@ -58,6 +58,8 @@ object BydNavigationOutputs {
 
     fun start(context: Context) {
         val app = context.applicationContext
+        // Off a BYD the bridges have no service to reach and would retry it every 300 ms.
+        if (!BydOutputSettings.available(app)) return
         useStandalone = BydStandaloneHudOutput.available(app)
         if (useStandalone) standalone.start { BydStandaloneNavigationBridge.initialize(app) }
         else {
