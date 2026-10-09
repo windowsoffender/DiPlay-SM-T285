@@ -282,6 +282,7 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
         refreshCarButton()
         carButtonSaved()
     }
+    private val allowScreenOff = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { render() }
     private val export = registerForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) { uri ->
         if (uri != null) exportDiagnostics(uri)
     }
@@ -1482,7 +1483,16 @@ class DiPlayActivity : ComponentActivity(), AppAppearanceOwner {
             }
             if (CarPower.hasBattery(this)) {
                 toggle(card, getString(R.string.settings_car_power_title), getString(R.string.settings_car_power_description),
-                    CarPower.enabled(this)) { CarPower.setEnabled(this, it) }
+                    CarPower.enabled(this)) { enabled ->
+                    CarPower.setEnabled(this, enabled)
+                    if (enabled && !CarPower.canTurnScreenOff(this)) allowScreenOff.launch(CarPower.allowScreenOffIntent(this))
+                    else render()
+                }
+                if (CarPower.enabled(this) && !CarPower.canTurnScreenOff(this)) {
+                    card.addView(button(getString(R.string.settings_car_power_screen_off), true) {
+                        allowScreenOff.launch(CarPower.allowScreenOffIntent(this))
+                    }, matchButton(8, 54))
+                }
             }
             adbToggle(card, R.string.open_after_the_car_starts,
                 R.string.availability_depends_on_your_head_unit_s_startup_settings,

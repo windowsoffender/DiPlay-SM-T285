@@ -7,7 +7,7 @@ What I changed from the original:
 - Runs on Android 5.1. The original needs Android 7.1 or newer
 - DiPlay is the home screen, so the tablet boots straight into it
 - DiPlay turns on the tablet's hotspot itself, no SIM needed. Samsung's settings won't turn on the hotspot without one
-- It wakes up and connects when the car starts charging it, and disconnects and goes to sleep 30 seconds after the car turns off
+- It wakes up and connects when the car starts charging it, and disconnects and turns the screen off 5 seconds after the car turns off
 - The BYD stuff stays off since my car isn't a BYD
 
 ## Setting up the tablet
@@ -18,7 +18,7 @@ The tablet is rooted with Magisk.
 2. Run `scripts/sm-t285-debloat.sh` to turn off everything DiPlay doesn't need. `scripts/sm-t285-debloat.sh restore` brings it all back
 3. With the hotspot off, run `scripts/sm-t285-hotspot.sh name DiPlay-T285` and `scripts/sm-t285-hotspot.sh channel 6`. Give it a unique name, my iPhone wouldn't join "AndroidAP"
 4. In DiPlay go to Settings > Connection > Open connection setup, pick Built-in car hotspot, enter the hotspot's name and password and turn on "Automatically turn on the car hotspot"
-5. Under Settings > Connection > Automatic connection turn on "Sleep and wake with the car"
+5. Under Settings > Connection > Automatic connection turn on "Sleep and wake with the car" and hit Activate when Android asks. That lets DiPlay turn the screen off. Turning the switch off takes the permission back, which you need before you can uninstall DiPlay
 6. On the tablet set Lock screen > Screen lock type to None, or you'll have to swipe every time the car starts
 
 Don't add Magisk boot scripts on this tablet. Samsung's kernel blocks them and it bootloops.

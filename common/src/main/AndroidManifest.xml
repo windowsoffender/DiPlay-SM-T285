@@ -166,6 +166,20 @@
             </intent-filter>
         </receiver>
 
+        <!-- Lets CarPower turn the screen off when the car is turned off; the driver allows it in Settings. -->
+        <receiver
+            android:name="com.shilapi.xcertplay.CarPowerAdmin"
+            android:description="@string/settings_car_power_screen_off_explanation"
+            android:exported="true"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/car_power_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name="com.shilapi.xcertplay.UsbAutoConfirmService"
             android:exported="true"

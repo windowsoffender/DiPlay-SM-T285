@@ -1,10 +1,13 @@
 package com.shilapi.xcertplay
 
 import android.app.AlarmManager
+import android.app.KeyguardManager
+import android.app.admin.DevicePolicyManager
 import android.content.Context
 import android.content.Intent
 import android.os.SystemClock
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -20,6 +23,8 @@ import org.robolectric.annotation.Config
 class CarPowerTest {
     private val context: Context get() = RuntimeEnvironment.getApplication()
     private val alarms get() = shadowOf(context.getSystemService(AlarmManager::class.java))
+    private val policy get() = shadowOf(context.getSystemService(DevicePolicyManager::class.java))
+    private val screenOff get() = context.getSystemService(KeyguardManager::class.java).isKeyguardLocked
 
     @Before fun setUp() {
         context.getSharedPreferences("diplay", 0).edit().clear().commit()
@@ -52,7 +57,30 @@ class CarPowerTest {
 
         val alarm = assertNotNull(alarms.nextScheduledAlarm)
         assertEquals(AlarmManager.ELAPSED_REALTIME_WAKEUP, alarm.type)
-        assertEquals(SystemClock.elapsedRealtime() + CarPower.GRACE_MILLIS, alarm.triggerAtTime)
+        assertEquals(SystemClock.elapsedRealtime() + 5_000, alarm.triggerAtTime)
+    }
+
+    @Test fun theCarTurnedOffTurnsTheScreenOffOnceAllowed() {
+        CarPower.setEnabled(context, true)
+        policy.setActiveAdmin(CarPower.screenOffAdmin(context))
+        CarPowerReceiver().onReceive(context, Intent(CarPower.ACTION_CHECK))
+
+        assertTrue(screenOff)
+    }
+
+    @Test fun theScreenIsLeftAloneWithoutPermission() {
+        CarPower.setEnabled(context, true)
+        CarPowerReceiver().onReceive(context, Intent(CarPower.ACTION_CHECK))
+
+        assertFalse(screenOff)
+    }
+
+    @Test fun turningTheSettingOffGivesUpTheScreenOffPermission() {
+        CarPower.setEnabled(context, true)
+        policy.setActiveAdmin(CarPower.screenOffAdmin(context))
+        CarPower.setEnabled(context, false)
+
+        assertFalse(CarPower.canTurnScreenOff(context))
     }
 
     @Test fun pluggingBackInDuringTheGracePeriodKeepsTheConnection() {
